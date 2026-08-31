@@ -362,7 +362,7 @@ html, body {
   margin: 0 6px;
 }
 
-/* ===== 第二页：林间友人来信（复用第一页 hero / main-panel / letter-card） ===== */
+/* ===== 第二页：林间友人来信（复用第一页 hero / main-panel，信纸为独立卡片） ===== */
 .page2 {
   position: relative;
   width: 100%;
@@ -387,118 +387,160 @@ html, body {
   white-space: nowrap;
 }
 
-/* 第二页信纸正文行：允许换行、文字居中 */
-.letter-row-words span {
-  text-align: center;
-  line-height: 1.8;
-}
-
-/* 「查看全部来信」按钮（主面板底部居中金色文字按钮） */
-.p2-view-all {
-  display: block;
-  margin: 16px auto 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #CEB275;
-  font-family: "Songti SC", "Noto Serif SC", serif;
-  font-size: 14px;
-  letter-spacing: 3px;
-  padding: 10px 18px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-}
-.p2-view-all:active {
-  opacity: 0.8;
-}
-
-/* 全部来信弹层 */
-.p2-letters-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  background: rgba(0, 0, 0, 0.55);
+/* ===== 第二页：来信轮播组件 ===== */
+.p2-carousel {
+  position: relative;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 24px;
+  gap: 14px;
+  background: rgba(20, 35, 20, 0.45);
+  border-radius: 16px;
+  padding: 18px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
-.p2-letters-modal.open {
+/* 左侧椭圆头像框（金色双层光环） */
+.p2-ellipse-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 88px;
+  height: 116px;
+  margin-right: 14px;
+}
+.p2-ellipse-ring {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #e8c96a, #c9a23a 50%, #a07d1e);
+  box-shadow:
+    0 0 16px rgba(232, 201, 106, 0.4),
+    0 0 4px rgba(232, 201, 106, 0.2);
+}
+.p2-ellipse-ring-inner {
+  position: absolute;
+  top: 3px; left: 3px; right: 3px; bottom: 3px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f5e3a0, #d4b455 50%, #b89530);
+}
+.p2-ellipse-img {
+  position: absolute;
+  top: 5px; left: 5px; right: 5px; bottom: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 1;
+  border: 1px solid rgba(184, 149, 48, 0.5);
+}
+/* 右侧信纸卡片（保留双层描边米色纸面） */
+.p2-paper-card {
+  flex: 1;
+  min-width: 0;
+  background: linear-gradient(180deg, #faf5e2 0%, #f4edcf 60%, #efe4bd 100%);
+  border-radius: 14px;
+  border: 1.5px solid #c9b585;
+  outline: 1px solid rgba(201, 181, 133, 0.45);
+  outline-offset: -6px;
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  padding: 20px 22px 24px;
+  text-align: left;
+}
+/* 顶部信息栏：头像+名称居左，时间居右 */
+.p2-paper-header {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
-.p2-letters-modal-box {
-  width: min(86vw, 420px);
-  max-height: 78vh;
-  overflow-y: auto;
-  background: #EBE1B9;
-  border-radius: 12px;
-  padding: 20px 18px 16px;
-}
-.p2-letters-modal-title {
-  text-align: center;
-  color: #5a4632;
-  font-family: "Songti SC", "Noto Serif SC", serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  margin-bottom: 10px;
-}
-.p2-letter-item {
+.p2-paper-sender {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
-  padding: 12px 2px;
-  border-bottom: 1px dashed rgba(90, 70, 50, 0.25);
+  min-width: 0;
 }
-.p2-letter-item:last-of-type {
-  border-bottom: none;
-}
-.p2-letter-item img {
+.p2-paper-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid rgba(222, 188, 120, 0.8);
+  flex-shrink: 0;
+  border: 2px solid rgba(201, 181, 133, 0.9);
+}
+.p2-paper-name {
+  color: #5a4632;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.p2-paper-time {
+  color: #b3a077;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  white-space: nowrap;
   flex-shrink: 0;
 }
-.p2-letter-item-main {
-  flex: 1;
-  min-width: 0;
+/* 正文区域 */
+.p2-paper-body {
+  padding-top: 12px;
+  border-top: 1px solid rgba(122, 88, 50, 0.12);
 }
-.p2-letter-item-meta {
-  display: flex;
-  align-items: baseline;
-}
-.p2-letter-item-name {
+.p2-paper-text {
   color: #5a4632;
   font-family: "Songti SC", "Noto Serif SC", serif;
-  font-size: 13px;
+  font-size: 15px;
+  line-height: 2;
+  letter-spacing: 0.5px;
+}
+
+/* 左右翻页箭头（金色圆形描边，半透明深绿底） */
+.p2-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(30, 50, 30, 0.85);
+  border: 1.5px solid rgba(206, 178, 117, 0.85);
+  color: #e8c96a;
+  font-size: 16px;
   font-weight: 700;
-}
-.p2-letter-item-time {
-  margin-left: auto;
-  color: #a08c6c;
-  font-size: 10px;
-}
-.p2-letter-item-body {
-  margin-top: 4px;
-  color: #5a4632;
-  font-family: "Songti SC", "Noto Serif SC", serif;
-  font-size: 12px;
-  line-height: 1.8;
-}
-.p2-letters-modal-close {
-  display: block;
-  margin: 14px auto 0;
-  background: none;
-  border: 1px solid #B99F5F;
-  border-radius: 18px;
-  color: #8a7550;
-  font-family: "Songti SC", "Noto Serif SC", serif;
-  font-size: 12px;
-  letter-spacing: 2px;
-  padding: 6px 26px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s;
 }
+.p2-arrow:active { opacity: 0.75; }
+.p2-arrow.prev { left: -4px; }
+.p2-arrow.next { right: -4px; }
+
+/* 底部圆点指示器 */
+.p2-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.p2-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(206, 178, 117, 0.4);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.p2-dot.active {
+  background: #e8c96a;
+  box-shadow: 0 0 6px rgba(232, 201, 106, 0.5);
+}
+
 </style>
 </head>
 <body>
@@ -574,34 +616,36 @@ html, body {
     <div class="p2-hero-title" id="js-p2-hero-title">林间友人来信</div>
   </section>
 
-  <!-- ===== 主内容面板（复制第一页，去掉照片墙与"林间的我们"） ===== -->
+  <!-- ===== 主内容面板 ===== -->
   <main class="main-panel">
     <h2 class="panel-title" id="js-p2-card-title"></h2>
 
-    <!-- 信笺卡片（复制第一页 letter-card） -->
-    <div class="letter-card">
-      <img class="envlope-decor" id="js-p2-envlope" alt="信封装饰">
-      <div class="letter-content">
-        <div class="letter-title" id="js-p2-info-title"></div>
-        <div class="letter-row"><span class="label">FROM</span><span id="js-p2-info-from"></span></div>
-        <div class="letter-row"><span class="label">TIME</span><span id="js-p2-info-time"></span></div>
-        <div class="letter-row letter-row-words"><span class="label">WORDS</span><span id="js-p2-info-words"></span></div>
-        <button class="letter-btn" id="js-p2-btn-text"></button>
+    <!-- 来信轮播（左侧椭圆大头像 + 信纸卡片 + 左右箭头 + 底部圆点） -->
+    <div class="p2-carousel">
+      <button class="p2-arrow prev" id="js-p2-prev" aria-label="上一封">‹</button>
+      <!-- 左侧：椭圆金环大头像 -->
+      <div class="p2-ellipse-avatar">
+        <div class="p2-ellipse-ring"></div>
+        <div class="p2-ellipse-ring-inner"></div>
+        <img class="p2-ellipse-img" id="js-p2-main-avatar" alt="来信者头像">
       </div>
+      <!-- 中间：信纸卡片 -->
+      <div class="p2-paper-card">
+        <div class="p2-paper-header">
+          <div class="p2-paper-sender">
+            <img class="p2-paper-avatar" id="js-p2-avatar" alt="来信头像">
+            <span class="p2-paper-name" id="js-p2-name"></span>
+          </div>
+          <span class="p2-paper-time" id="js-p2-time"></span>
+        </div>
+        <div class="p2-paper-body">
+          <p class="p2-paper-text" id="js-p2-text"></p>
+        </div>
+      </div>
+      <button class="p2-arrow next" id="js-p2-next" aria-label="下一封">›</button>
     </div>
-
-    <!-- 查看全部来信 -->
-    <button class="p2-view-all" id="js-p2-view-all">查看全部来信</button>
+    <div class="p2-dots" id="js-p2-dots"></div>
   </main>
-
-  <!-- 全部来信弹层 -->
-  <div class="p2-letters-modal" id="js-p2-modal">
-    <div class="p2-letters-modal-box">
-      <div class="p2-letters-modal-title">全部来信</div>
-      <div class="p2-letters-list" id="js-p2-letters-list"></div>
-      <button class="p2-letters-modal-close" id="js-p2-modal-close">关 闭</button>
-    </div>
-  </div>
 </div>
 
 <script src="./index.js"></script>

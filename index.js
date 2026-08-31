@@ -19,7 +19,6 @@ const pageConfig = {
   // 第二页
   page2HeroTitle: "林间友人来信",
   page2CardTitle: "林间的友人来信",
-  page2InfoTitle: "一封来自林间的回信",
   page2BtnText: "查看全部来信",
   page2Letters: [
     {
@@ -42,6 +41,13 @@ const pageConfig = {
       name: "月光猫头鹰",
       time: "10分钟前",
       text: "月光洒满林间小路，我们将为你们照亮前方，祝福新人百年好合。"
+    },
+    {
+      mainAvatar: "./assets/avatar/爱丽丝梦游仙境森林系邀请函设计 (11).png",
+      avatar: "./assets/avatar/爱丽丝梦游仙境森林系邀请函设计 (11).png",
+      name: "梦境精灵",
+      time: "30分钟前",
+      text: "在梦境的尽头收到了你们的请柬，我们会带着星光与花香，准时赴这一场林间之约。"
     }
   ],
 
@@ -168,43 +174,62 @@ openFormBtn.onclick = () => {
   }
 };
 
-// ===================== 第二页内容（复用第一页结构） =====================
+// ===================== 第二页：林间友人来信轮播 =====================
 $("#js-p2-top-small-title").innerText = pageConfig.topSmallTitle;
 $("#js-p2-top-date").innerText = pageConfig.topDate;
 $("#js-p2-hero-title").innerText = pageConfig.page2HeroTitle;
 $("#js-p2-card-title").innerText = pageConfig.page2CardTitle;
-$("#js-p2-envlope").src = pageConfig.envlope;
-$("#js-p2-info-title").innerText = pageConfig.page2InfoTitle;
-$("#js-p2-btn-text").innerText = pageConfig.page2BtnText;
 
-// 信纸内容：默认渲染第一封来信
 const p2Letters = pageConfig.page2Letters;
+let p2Current = 0;
 
-(function renderP2Letter() {
-  const letter = p2Letters[0];
-  $("#js-p2-info-from").innerText = letter.name;
-  $("#js-p2-info-time").innerText = letter.time;
-  $("#js-p2-info-words").innerText = letter.text;
-})();
+const p2MainAvatar = $("#js-p2-main-avatar");
+const p2Avatar = $("#js-p2-avatar");
+const p2Name = $("#js-p2-name");
+const p2Time = $("#js-p2-time");
+const p2Text = $("#js-p2-text");
+const p2Dots = $("#js-p2-dots");
 
-// 全部来信弹层
-const p2Modal = $("#js-p2-modal");
-const p2List = $("#js-p2-letters-list");
+// 素材缺失时隐藏破图
+p2MainAvatar.onerror = () => { p2MainAvatar.style.visibility = "hidden"; };
+p2Avatar.onerror = () => { p2Avatar.style.visibility = "hidden"; };
 
-p2List.innerHTML = p2Letters.map((l) => `
-  <div class="p2-letter-item">
-    <img src="${l.avatar}" alt="${l.name}">
-    <div class="p2-letter-item-main">
-      <div class="p2-letter-item-meta">
-        <span class="p2-letter-item-name">${l.name}</span>
-        <span class="p2-letter-item-time">${l.time}</span>
-      </div>
-      <div class="p2-letter-item-body">${l.text}</div>
-    </div>
-  </div>`).join("");
+// 渲染分页圆点
+p2Dots.innerHTML = p2Letters.map((_, i) =>
+  `<span class="p2-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`
+).join("");
 
-$("#js-p2-view-all").addEventListener("click", () => p2Modal.classList.add("open"));
-$("#js-p2-modal-close").addEventListener("click", () => p2Modal.classList.remove("open"));
-p2Modal.addEventListener("click", (e) => {
-  if (e.target === p2Modal) p2Modal.classList.remove("open");
+function renderP2Card(index) {
+  const item = p2Letters[index];
+  p2MainAvatar.style.visibility = "visible";
+  p2MainAvatar.src = item.mainAvatar;
+  p2Avatar.style.visibility = "visible";
+  p2Avatar.src = item.avatar;
+  p2Name.innerText = item.name;
+  p2Time.innerText = item.time;
+  p2Text.innerText = item.text;
+
+  // 更新指示圆点状态
+  p2Dots.querySelectorAll(".p2-dot").forEach((dot, i) => {
+    dot.classList.toggle("active", i === index);
+  });
+}
+
+// 左右翻页与圆点点击
+$("#js-p2-prev").addEventListener("click", () => {
+  p2Current = (p2Current + p2Letters.length - 1) % p2Letters.length;
+  renderP2Card(p2Current);
 });
+$("#js-p2-next").addEventListener("click", () => {
+  p2Current = (p2Current + 1) % p2Letters.length;
+  renderP2Card(p2Current);
+});
+p2Dots.addEventListener("click", (e) => {
+  if (e.target.classList.contains("p2-dot")) {
+    p2Current = Number(e.target.dataset.index);
+    renderP2Card(p2Current);
+  }
+});
+
+// 初始渲染
+renderP2Card(0);
