@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>林间来信 · 信纸卡片</title>
+<style>
+  /* ===== 页面背景：仿截图的浅绿林间氛围 ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    /* 截图背景细节不可辨认，用柔和的浅绿渐变代替林间底色 */
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(255, 252, 230, 0.9), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(216, 222, 178, 0.8), transparent 60%),
+      linear-gradient(160deg, #e9e8cf 0%, #d5d9b2 45%, #c3cc9d 100%);
+    font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+  }
+
+  /* ===== 信纸卡片容器 ===== */
+  .letter-card {
+    width: min(92vw, 400px);
+    /* 米色纸面基色 + 细微暖色光感 */
+    background:
+      linear-gradient(180deg, #faf5e2 0%, #f4edcf 60%, #efe4bd 100%);
+    border-radius: 14px;
+    /* 双层描边：外层实线 + 内侧细线，仿截图信纸描金边效果 */
+    border: 1.5px solid #c9b585;
+    outline: 1px solid rgba(201, 181, 133, 0.45);
+    outline-offset: -6px;
+    /* 柔和投影 + 纸面内侧微亮 */
+    box-shadow:
+      0 10px 26px rgba(90, 70, 40, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    padding: 22px 24px 26px;
+  }
+
+  /* ===== 顶部信息栏：头像+名称居左，时间居右 ===== */
+  .letter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .letter-sender {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .sender-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    /* 截图中头像外有一圈浅金细边 */
+    border: 2px solid rgba(201, 181, 133, 0.9);
+  }
+  .sender-name {
+    color: #5a4632;           /* 深棕，与正文同色系 */
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .letter-time {
+    color: #b3a077;           /* 浅褐/浅灰金，与名称形成视觉层级 */
+    font-size: 14px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ===== 正文区域 ===== */
+  .letter-body {
+    margin-top: 8px;
+    padding: 14px 0 0;
+    /* 顶部细分割线，呼应截图中头部与正文之间的留白感（截图本身不明显，做弱化处理） */
+    border-top: 1px solid rgba(122, 88, 50, 0.12);
+  }
+  .letter-text {
+    color: #5a4632;
+    font-size: 15px;
+    line-height: 2;           /* 截图行距较松，约 2 倍 */
+    letter-spacing: 0.5px;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+  <article class="letter-card">
+    <!-- 顶部信息栏 -->
+    <header class="letter-header">
+      <div class="letter-sender">
+        <!-- 头像可替换为任意素材；当前复用项目内头像，缺失时显示底色占位 -->
+        <img class="sender-avatar" src="./assets/avatar/林间友人来信素材.png" alt="林间小兔">
+        <span class="sender-name">林间小兔</span>
+      </div>
+      <time class="letter-time">刚刚</time>
+    </header>
+
+    <!-- 正文 -->
+    <div class="letter-body">
+      <p class="letter-text">我们已收到你的婚礼邀请，愿穿过月光与花海，赴约这一场林间之约。</p>
+    </div>
+  </article>
+
+</body>
+</html>

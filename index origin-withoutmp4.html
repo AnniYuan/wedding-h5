@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>林间婚礼请柬</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+  background: #1a2b1a;
+  color: #f5e9c9;
+}
+
+/* ===== 整页森林背景 ===== */
+.wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: url("./assets/bg/forest-bg.jpg") center top / cover no-repeat;
+  padding: 16px 12px 0;
+  overflow: hidden;
+}
+
+/* ===== 顶部 Hero 模块（仅保留 title-border.png 一层边框） ===== */
+.hero {
+  position: relative;
+  margin-bottom: 14px;
+  /* 移除 overflow: hidden，允许兔子/茶杯装饰探出边框 */
+}
+
+/* Hero 顶部小字行 */
+.hero-top-row {
+  position: absolute;
+  top: 6%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+}
+.hero-small-title {
+  color: #a8c68f;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.hero-date {
+  position: absolute;
+  right: 16px;
+  top: 0;
+  color: #f5e9c9;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+}
+
+/* 大标题图片：绝对定位叠加在边框图上方 */
+.hero-title-font {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 82%;
+  max-width: 340px;
+  z-index: 2;
+}
+
+/* 标题边框背景：文档流内完整显示，撑开 hero 高度 */
+.hero-title-border {
+  display: block;
+  width: 100%;
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 兔子/茶杯装饰已集成进 title-border.png，无需单独元素 */
+
+/* ===== 主内容面板 ===== */
+.main-panel {
+  position: relative;
+  border: 1px solid rgba(222, 188, 120, 0.55);
+  border-radius: 20px;
+  background: rgba(16, 34, 18, 0.28);
+  backdrop-filter: blur(2px);
+  padding: 24px 14px 20px;
+  margin-bottom: 14px;
+}
+
+/* 面板标题：◇ 林间的特别邀请 ◇ */
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #f3e5bd;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
+}
+.panel-title::before,
+.panel-title::after {
+  content: "◇";
+  font-size: 11px;
+  color: rgba(222, 188, 120, 0.9);
+}
+
+/* ===== 照片轮播区域 ===== */
+.photo-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 28px;
+  margin-bottom: 6px;
+}
+.photo-frame {
+  position: relative;
+  width: 30%;
+  aspect-ratio: 3 / 4.4;
+  border: 2px solid rgba(222, 188, 120, 0.9);
+  outline: 1px solid rgba(222, 188, 120, 0.45);
+  outline-offset: 3px;
+  border-radius: 999px 999px 14px 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,215,130,0.12);
+  opacity: 0.75;
+  transform: scale(0.92);
+  transition: all 0.35s ease;
+  z-index: 2;
+}
+.photo-frame.active {
+  opacity: 1;
+  transform: scale(1.04);
+  z-index: 3;
+}
+.photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 轮播箭头 */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #e8cf96;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.6);
+  z-index: 4;
+}
+.carousel-arrow.prev { left: -2px; }
+.carousel-arrow.next { right: -2px; }
+
+/* 照片下方文字 */
+.photo-sub-title {
+  margin-top: -28px;
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: #edc97e;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.65);
+}
+.photo-desc {
+  text-align: center;
+  color: #f0e6c8;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+  margin: 8px 0 20px;
+}
+
+/* ===== 信笺信息卡片（envlope 信封图片为背景） ===== */
+.letter-card {
+  position: relative;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.38);
+  margin: 0 -8px; /* 向左右扩展，让信封更大 */
+}
+/* 信封图在文档流内，完整显示不被截断 */
+.envlope-decor {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 14px;
+}
+/* 文字内容覆盖在信封上方居中 */
+.letter-content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 44px; /* 加大左右边距，确保分割线不超出信封 */
+}
+.letter-title {
+  position: relative;
+  color: #5a4632;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin: 4px 0 10px;
+  padding-bottom: 9px;
+}
+/* 主分割线：标题下方，醒目，两端渐隐，缩短避免触及信封留白 */
+.letter-title::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 58%;
+  height: 2px;
+  background:
+    linear-gradient(90deg, transparent, rgba(122, 88, 50, 0.75) 22%, rgba(122, 88, 50, 0.75) 78%, transparent);
+  box-shadow: 0 3px 0 -1px rgba(122, 88, 50, 0.3);
+}
+.letter-row {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  color: #5a4632;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 15px;
+  letter-spacing: 1px;
+  padding: 6px 0;
+}
+/* 次分割线：伪元素居中，宽度缩短（68%），两端渐隐，不伸到留白处 */
+.letter-row::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 68%;
+  height: 1px;
+  background:
+    linear-gradient(90deg, transparent, rgba(160, 120, 60, 0.25) 15%, rgba(160, 120, 60, 0.25) 85%, transparent);
+}
+.letter-row .label {
+  display: inline-block;
+  min-width: 50px;
+  margin-right: 8px;
+  color: #a07c3c;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.letter-btn {
+  margin-top: 14px;
+  padding: 8px 32px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(180deg, #eac470 0%, #c9963c 100%);
+  color: #fff8ec;
+  font-size: 13px;
+  letter-spacing: 3px;
+  box-shadow: 0 3px 10px rgba(160,110,30,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+  cursor: pointer;
+}
+.letter-btn:active { transform: scale(0.96); }
+
+/* ===== RSVP 回执区域 ===== */
+.rsvp-container {
+  display: none;
+  margin-top: 16px;
+  border: 1px solid rgba(222, 188, 120, 0.55);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.rsvp-iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  background: transparent;
+}
+.fallback-tip {
+  display: none;
+  text-align: center;
+  margin-top: 12px;
+  color: #f0e6c8;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+}
+.fallback-btn {
+  margin-top: 10px;
+  padding: 8px 26px;
+  border-radius: 24px;
+  border: none;
+  background: #e6b268;
+  color: #333;
+}
+
+/* ===== 底部导航（悬浮固定） ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  padding: 10px 18px;
+  border: 1px solid rgba(222, 188, 120, 0.55);
+  border-radius: 24px;
+  background: rgba(16, 34, 18, 0.72);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.nav-item {
+  color: #f3e5bd;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+  padding: 0 16px;
+}
+.nav-item + .nav-item { border-left: 1px solid rgba(222, 188, 120, 0.55); }
+.nav-mark {
+  color: rgba(222, 188, 120, 0.9);
+  font-size: 10px;
+  margin: 0 6px;
+}
+
+/* ===== 第二页：林间友人来信（与第一页同构：Hero + 主面板） ===== */
+.page2 {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: url("./assets/bg/forest-bg.jpg") center top / cover no-repeat;
+  padding: 16px 12px 80px; /* 底部留白给悬浮导航 */
+}
+
+/* Hero：标题边框背景 + 文字标题 */
+.p2-hero {
+  position: relative;
+  margin-bottom: 14px;
+}
+.p2-hero-border {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+.p2-hero-title {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #f3e5bd;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  white-space: nowrap;
+}
+
+/* 主面板 */
+.p2-panel {
+  position: relative;
+  border: 1px solid rgba(222, 188, 120, 0.55);
+  border-radius: 20px;
+  background: rgba(16, 34, 18, 0.28);
+  backdrop-filter: blur(2px);
+  padding: 24px 14px 28px;
+}
+.p2-panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #f3e5bd;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
+}
+.p2-panel-title::before,
+.p2-panel-title::after {
+  content: "◇";
+  font-size: 11px;
+  color: rgba(222, 188, 120, 0.9);
+}
+.p2-photo-wrap {
+  position: relative;
+  width: 100%;
+  border: 2px solid rgba(222, 188, 120, 0.9);
+  outline: 1px solid rgba(222, 188, 120, 0.45);
+  outline-offset: 3px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  margin-bottom: 20px;
+}
+.p2-photo-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.p2-info {
+  text-align: center;
+}
+.p2-info-row {
+  color: #f0e6c8;
+  font-size: 15px;
+  letter-spacing: 1px;
+  padding: 8px 0;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+}
+.p2-info-row .label {
+  display: inline-block;
+  min-width: 56px;
+  margin-right: 8px;
+  color: #edc97e;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.p2-btn {
+  margin-top: 18px;
+  padding: 10px 36px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(180deg, #eac470 0%, #c9963c 100%);
+  color: #fff8ec;
+  font-size: 14px;
+  letter-spacing: 3px;
+  box-shadow: 0 3px 10px rgba(160,110,30,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+  cursor: pointer;
+}
+.p2-btn:active { transform: scale(0.96); }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ===== 顶部 Hero 模块 ===== -->
+  <section class="hero">
+    <img class="hero-title-border" id="js-title-border" alt="标题边框装饰">
+    <div class="hero-top-row">
+      <span class="hero-small-title" id="js-top-small-title"></span>
+      <span class="hero-date" id="js-top-date"></span>
+    </div>
+    <img class="hero-title-font" id="js-title-font" alt="WEDDING INVITATION">
+  </section>
+
+  <!-- ===== 主内容面板 ===== -->
+  <main class="main-panel">
+    <h2 class="panel-title" id="js-card-title"></h2>
+
+    <!-- 照片轮播 -->
+    <div class="photo-stage">
+      <button class="carousel-arrow prev" id="js-prev">‹</button>
+      <div class="photo-frame" data-index="0"><img id="img-p1" alt="婚纱照1"></div>
+      <div class="photo-frame active" data-index="1"><img id="img-p2" alt="婚纱照2"></div>
+      <div class="photo-frame" data-index="2"><img id="img-p3" alt="婚纱照3"></div>
+      <button class="carousel-arrow next" id="js-next">›</button>
+    </div>
+    <div class="photo-sub-title" id="js-photo-sub"></div>
+    <div class="photo-desc" id="js-photo-desc"></div>
+
+    <!-- 信笺信息卡片 -->
+    <div class="letter-card">
+      <img class="envlope-decor" id="js-envlope" alt="信封装饰">
+      <div class="letter-content">
+        <div class="letter-title" id="js-info-title"></div>
+        <div class="letter-row"><span class="label">DATE</span><span id="js-info-date"></span></div>
+        <div class="letter-row"><span class="label">PLACE</span><span id="js-info-place"></span></div>
+        <div class="letter-row"><span class="label">CREW</span><span id="js-info-crew"></span></div>
+        <button class="letter-btn" id="js-btn-text"></button>
+      </div>
+    </div>
+
+    <!-- RSVP 回执表单 -->
+    <div class="rsvp-container" id="rsvpContainer">
+      <iframe id="rsvpIframe" class="rsvp-iframe" sandbox="allow-forms allow-scripts allow-top-navigation"></iframe>
+    </div>
+    <div class="fallback-tip" id="fallbackWrap">
+      表单加载异常，请跳转填写回执<br>
+      <button class="fallback-btn" id="openFormBtn">前往填写回执</button>
+    </div>
+  </main>
+
+  <!-- 底部导航（悬浮） -->
+  <nav class="bottom-nav" id="js-bottom-nav"></nav>
+</div>
+
+<!-- ===== 第二页：林间友人来信 ===== -->
+<div class="page2">
+  <!-- Hero：林间友人来信 -->
+  <section class="p2-hero">
+    <img class="p2-hero-border" src="./assets/border/title-border.png" alt="标题边框装饰">
+    <div class="p2-hero-title" id="js-p2-hero-title">林间友人来信</div>
+  </section>
+
+  <!-- 主面板 -->
+  <main class="p2-panel">
+    <h2 class="p2-panel-title">婚礼详情</h2>
+    <div class="p2-photo-wrap">
+      <img id="js-p2-photo" alt="婚礼照片">
+    </div>
+    <div class="p2-info">
+      <div class="p2-info-row"><span class="label">DATE</span><span id="js-p2-date"></span></div>
+      <div class="p2-info-row"><span class="label">PLACE</span><span id="js-p2-place"></span></div>
+      <div class="p2-info-row"><span class="label">CREW</span><span id="js-p2-crew"></span></div>
+      <button class="p2-btn" id="js-p2-btn">确认出席</button>
+    </div>
+  </main>
+</div>
+
+<script src="./index.js"></script>
+</body>
+</html>
