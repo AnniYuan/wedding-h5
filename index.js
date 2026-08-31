@@ -15,6 +15,8 @@ const pageConfig = {
   btnText: "接过信笺",
 
   nav: ["任务", "日程", "地图", "登记"],
+  // 导航点击锚点（与 nav 一一对应；目标隐藏时回退到第一页信笺卡）
+  navTargets: [".wrapper", "#page3", "#js-p3-map-btn", "#rsvpContainer"],
 
   // 第二页
   page2HeroTitle: "林间友人来信",
@@ -22,33 +24,46 @@ const pageConfig = {
   page2BtnText: "查看全部来信",
   page2Letters: [
     {
-      mainAvatar: "./assets/avatar/林间友人来信素材.png",
-      avatar: "./assets/avatar/林间友人来信素材.png",
+      mainAvatar: "./assets/avatar/letter-avatar-1.png",
+      avatar: "./assets/avatar/letter-avatar-1.png",
       name: "林间小兔",
       time: "刚刚",
       text: "我们已收到你的婚礼邀请，愿穿过月光与花海，赴约这一场林间之约。"
     },
     {
-      mainAvatar: "./assets/avatar/林间友人来信素材 (1).png",
-      avatar: "./assets/avatar/林间友人来信素材 (1).png",
+      mainAvatar: "./assets/avatar/letter-avatar-2.png",
+      avatar: "./assets/avatar/letter-avatar-2.png",
       name: "森林松鼠",
       time: "5分钟前",
       text: "听说森林深处有一场婚礼，我们准备了最甜的松果，等着为你们庆祝。"
     },
     {
-      mainAvatar: "./assets/avatar/林间友人来信素材 (2).png",
-      avatar: "./assets/avatar/林间友人来信素材 (2).png",
+      mainAvatar: "./assets/avatar/letter-avatar-3.png",
+      avatar: "./assets/avatar/letter-avatar-3.png",
       name: "月光猫头鹰",
       time: "10分钟前",
       text: "月光洒满林间小路，我们将为你们照亮前方，祝福新人百年好合。"
     },
     {
-      mainAvatar: "./assets/avatar/爱丽丝梦游仙境森林系邀请函设计 (11).png",
-      avatar: "./assets/avatar/爱丽丝梦游仙境森林系邀请函设计 (11).png",
+      mainAvatar: "./assets/avatar/letter-avatar-4.png",
+      avatar: "./assets/avatar/letter-avatar-4.png",
       name: "梦境精灵",
       time: "30分钟前",
       text: "在梦境的尽头收到了你们的请柬，我们会带着星光与花香，准时赴这一场林间之约。"
     }
+  ],
+
+  // 第三页：婚礼日程
+  page3HeroTitle: "婚礼日程",
+  page3CardTitle: "婚礼日程",
+  page3SubTitle: "沿着林间光线，走向约定的时刻",
+  page3Schedule: [
+    { time: "13:00", label: "宾客签到" },
+    { time: "13:30", label: "仪式入场" },
+    { time: "14:00", label: "交换誓言" },
+    { time: "14:10", label: "交换戒指" },
+    { time: "14:30", label: "合影留念" },
+    { time: "18:00", label: "晚宴开始" }
   ],
 
   // 婚纱照路径（素材留空时可先替换为占位图）
@@ -66,7 +81,7 @@ const pageConfig = {
   titleFont: "./assets/border/title-font.png",
   titleBorder: "./assets/border/title-border.png",
   avatorCard: "./assets/border/avator-card.png",
-  envlope: "./assets/border/envlope.png",
+  envelope: "./assets/border/envelope.png",
 
   // -------- 回执表单配置（留空则不显示 RSVP 区域） --------
   iframeFormUrl: "",
@@ -92,8 +107,8 @@ $("#js-btn-text").innerText = pageConfig.btnText;
 
 // 边框装饰素材（兔子/茶杯已集成进 title-border.png，不再单独引用）
 $("#js-title-font").src = pageConfig.titleFont;
-$("#js-title-border").src = pageConfig.titleBorder;
-$("#js-envlope").src = pageConfig.envlope;
+document.documentElement.style.setProperty("--title-border-img", `url("${pageConfig.titleBorder}")`);
+$("#js-envlope").src = pageConfig.envelope;
 
 // ===================== 开场视频 =====================
 const introVideo = $("#js-intro-video");
@@ -153,6 +168,16 @@ pageConfig.nav.forEach((text, i) => {
   const item = document.createElement("span");
   item.className = "nav-item";
   item.innerText = text;
+  // 锚点滚动：按 navTargets 配置定位到对应页面元素
+  item.addEventListener("click", () => {
+    const sel = (pageConfig.navTargets || [])[i];
+    let el = sel ? document.querySelector(sel) : null;
+    // 目标隐藏（如未配置 RSVP 表单）时回退到第一页信笺卡
+    if (el && !el.getClientRects().length) {
+      el = document.querySelector(".letter-card");
+    }
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
   navBox.appendChild(item);
 });
 navBox.insertAdjacentHTML("beforeend", '<span class="nav-mark">▲</span>');
@@ -194,6 +219,17 @@ const p2Dots = $("#js-p2-dots");
 p2MainAvatar.onerror = () => { p2MainAvatar.style.visibility = "hidden"; };
 p2Avatar.onerror = () => { p2Avatar.style.visibility = "hidden"; };
 
+// 撑高副本：把每封信的正文各渲染一份隐形拷贝，与真正的正文共用同一个 grid 单元格。
+// 卡片高度因此恒等于最长的那封，翻页时容器不会跳动（纯 CSS 决定，无需 JS 测量）。
+const p2Body = $("#js-p2-body");
+p2Letters.forEach((item) => {
+  const ghost = document.createElement("p");
+  ghost.className = "p2-paper-text p2-text-ghost";
+  ghost.setAttribute("aria-hidden", "true");
+  ghost.innerText = item.text;
+  p2Body.appendChild(ghost);
+});
+
 // 渲染分页圆点
 p2Dots.innerHTML = p2Letters.map((_, i) =>
   `<span class="p2-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`
@@ -233,3 +269,15 @@ p2Dots.addEventListener("click", (e) => {
 
 // 初始渲染
 renderP2Card(0);
+
+// ===================== 第三页：婚礼日程 =====================
+$("#js-p3-top-small-title").innerText = pageConfig.topSmallTitle;
+$("#js-p3-top-date").innerText = pageConfig.topDate;
+$("#js-p3-hero-title").innerText = pageConfig.page3HeroTitle;
+$("#js-p3-card-title").innerText = pageConfig.page3CardTitle;
+$("#js-p3-sub").innerText = pageConfig.page3SubTitle;
+
+const p3Schedule = $("#js-p3-schedule");
+p3Schedule.innerHTML = pageConfig.page3Schedule.map((item) =>
+  `<li class="p3-item"><span class="p3-time">${item.time}</span><span class="p3-label">${item.label}</span></li>`
+).join("");

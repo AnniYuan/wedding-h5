@@ -7,6 +7,8 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+:root { --title-border-img: url("./assets/border/title-border.png"); }
+
 /* ===== 开场视频 ===== */
 .intro-video-wrap {
   position: relative;
@@ -74,22 +76,38 @@ html, body {
 
 /* 大标题图片：绝对定位叠加在边框图上方 */
 .hero-title-font {
-  position: absolute;
-  top: 52%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: block;
   width: 82%;
   max-width: 340px;
   z-index: 2;
 }
 
-/* 标题边框背景：文档流内完整显示，撑开 hero 高度 */
-.hero-title-border {
-  display: block;
-  width: 100%;
-  height: auto;
+/* 标题金框：border-image 九宫格。
+   素材 title-border.png 裁切后为 2196x1735，四角装饰（藤叶/兔子/茶杯钟）落在角区，
+   中间只留纯金线细条用于拉伸，因此 hero 高度可随内容自由增长而装饰零变形。
+   切片(px)：上 1000 / 右 896 / 下 695 / 左 1100
+   s = 边框实际宽度 / 素材宽度，保证四角始终按原比例渲染 */
+.hero-frame {
+  --hw: calc(100vw - 24px);       /* wrapper 左右各 12px padding */
+  --s:  calc(var(--hw) / 2196);
+  border-style: solid;
+  border-width: calc(1000*var(--s)) calc(896*var(--s)) calc(695*var(--s)) calc(1100*var(--s));
+  border-image-source: var(--title-border-img);
+  border-image-slice: 1000 896 695 1100;
+  border-image-width: calc(1000*var(--s)) calc(896*var(--s)) calc(695*var(--s)) calc(1100*var(--s));
+  border-image-repeat: stretch;
   z-index: 0;
   pointer-events: none;
+}
+/* 内容层：用负 margin 顶回金框的开口内（开口相对素材四边约留 150px）。
+   这样内容仍在 .hero-frame 的流内 —— 内容一变高，金框就自动跟着拉长。 */
+.hero-inner {
+  margin: calc(-850*var(--s)) calc(-746*var(--s)) calc(-545*var(--s)) calc(-950*var(--s));
+  min-height: calc(1435*var(--s));   /* 空内容时仍保持素材原始比例 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 兔子/茶杯装饰已集成进 title-border.png，无需单独元素 */
@@ -354,6 +372,7 @@ html, body {
   letter-spacing: 3px;
   text-shadow: 0 1px 4px rgba(0,0,0,0.55);
   padding: 0 16px;
+  cursor: pointer;
 }
 .nav-item + .nav-item { border-left: 1px solid rgba(222, 188, 120, 0.55); }
 .nav-mark {
@@ -373,11 +392,8 @@ html, body {
 
 /* 第二页 Hero 大标题（第一页用 title-font 字图，此处为文字版，叠加在边框图上） */
 .p2-hero-title {
-  position: absolute;
-  top: 46%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   z-index: 2;
+  text-align: center;
   color: #f3e5bd;
   font-family: "Songti SC", "Noto Serif SC", serif;
   font-size: clamp(34px, 10.5vw, 44px);
@@ -392,19 +408,21 @@ html, body {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
-  background: rgba(20, 35, 20, 0.45);
-  border-radius: 16px;
-  padding: 18px 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  gap: 0;
+  background: transparent;
+  padding: 8px 0;
 }
 /* 左侧椭圆头像框（金色双层光环） */
 .p2-ellipse-avatar {
   position: relative;
   flex-shrink: 0;
-  width: 88px;
-  height: 116px;
-  margin-right: 14px;
+  /* 随视口缩放：320px 屏约 83px，375px 及以上封顶 98px。
+     高宽比 1.45，比原素材 88:116 更修长，贴近效果图。 */
+  --ew: clamp(82px, 26vw, 98px);
+  z-index: 1;              /* 贴近信纸时压在纸面之上 */
+  margin-right: -6px;      /* 抵消素材左侧那圈「叠纸」留白，视觉上真正贴住 */
+  width: var(--ew);
+  height: calc(var(--ew) * 1.45);
 }
 .p2-ellipse-ring {
   position: absolute;
@@ -431,37 +449,52 @@ html, body {
   z-index: 1;
   border: 1px solid rgba(184, 149, 48, 0.5);
 }
-/* 右侧信纸卡片（保留双层描边米色纸面） */
+/* 右侧信纸卡片（背景使用信纸图素材） */
+/* 信纸卡片：整张 envelope.png 素材当卡片背景（邮戳/金边/右下绿叶/背后叠纸都在素材里）。
+   素材 1570x859 是横版，卡片却要竖着长，所以同样走 border-image 九宫格：
+   切片(px) 上 240 / 右 339 / 下 458 / 左 419 —— 邮戳落在左上角区、绿叶落在右下角区，
+   中间是纯纸面，纵向拉伸完全看不出来。fill 让中间纸面填进卡片内部。
+   四边切片都按卡片自身宽度(cqw)换算，横竖同一缩放比例，素材零变形。 */
 .p2-paper-card {
   flex: 1;
   min-width: 0;
-  background: linear-gradient(180deg, #faf5e2 0%, #f4edcf 60%, #efe4bd 100%);
-  border-radius: 14px;
-  border: 1.5px solid #c9b585;
-  outline: 1px solid rgba(201, 181, 133, 0.45);
-  outline-offset: -6px;
-  box-shadow:
-    0 10px 26px rgba(0, 0, 0, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  padding: 20px 22px 24px;
+  position: relative;
+  container-type: inline-size;
   text-align: left;
 }
+.p2-paper-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-style: solid;
+  border-width: 15.29cqw 21.59cqw 29.17cqw 26.69cqw;
+  border-image: url("assets/border/envelope.png") 240 339 458 419 fill /
+                15.29cqw 21.59cqw 29.17cqw 26.69cqw / 0 stretch;
+}
+/* 内容压在纸面之上 */
+.p2-paper-header,
+.p2-paper-body { position: relative; z-index: 1; }
 /* 顶部信息栏：头像+名称居左，时间居右 */
 .p2-paper-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 8px;
+  /* 上边距让开素材顶部的邮戳与花饰（= 上切片 15.29cqw 再加一点呼吸） */
+  margin: calc(15.29cqw + 2px) 9cqw 8px;
 }
 .p2-paper-sender {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;   /* 允许收缩，姓名过长时才可能触发省略号 */
 }
 .p2-paper-avatar {
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
@@ -470,38 +503,54 @@ html, body {
 .p2-paper-name {
   color: #5a4632;
   font-family: "Songti SC", "Noto Serif SC", serif;
-  font-size: 17px;
+  font-size: clamp(13px, 4vw, 15px);
   font-weight: 700;
   letter-spacing: 1px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;   /* 极窄屏/超长昵称时截断，绝不再压到时间上 */
+  min-width: 0;
 }
 .p2-paper-time {
   color: #b3a077;
   font-family: "Songti SC", "Noto Serif SC", serif;
-  font-size: 14px;
+  font-size: clamp(11px, 3.2vw, 12px);
   letter-spacing: 1px;
   white-space: nowrap;
   flex-shrink: 0;
 }
+/* 窄屏（iPhone SE 等 ≤360px）：表头小圆头像与左栏椭圆头像是同一张图，
+   此处省掉它，把这 34px 让给昵称，避免「月光猫头鹰 + 10分钟前」被截断。 */
+@media (max-width: 360px) {
+  .p2-paper-avatar { display: none; }
+}
+
 /* 正文区域 */
 .p2-paper-body {
+  display: grid;              /* 正文与撑高副本共用同一个网格单元 */
+  align-content: start;       /* 正文顶对齐 */
+  margin: 0 9cqw 6cqw;
   padding-top: 12px;
   border-top: 1px solid rgba(122, 88, 50, 0.12);
+}
+.p2-paper-body > .p2-paper-text { grid-area: 1 / 1; }
+/* 撑高副本：由 JS 按 page2Letters 生成，只参与计算高度、不可见。
+   于是卡片高度恒等于最长一封信，翻页时容器不跳动。 */
+.p2-text-ghost {
+  visibility: hidden;
+  pointer-events: none;
 }
 .p2-paper-text {
   color: #5a4632;
   font-family: "Songti SC", "Noto Serif SC", serif;
   font-size: 15px;
-  line-height: 2;
+  line-height: 1.85;
   letter-spacing: 0.5px;
 }
 
 /* 左右翻页箭头（金色圆形描边，半透明深绿底） */
 .p2-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
+  flex-shrink: 0;
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -518,15 +567,21 @@ html, body {
   transition: background 0.2s;
 }
 .p2-arrow:active { opacity: 0.75; }
-.p2-arrow.prev { left: -4px; }
-.p2-arrow.next { right: -4px; }
+
+/* 翻页控制行：‹ ●●●● › */
+.p2-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+}
 
 /* 底部圆点指示器 */
 .p2-dots {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 14px;
 }
 .p2-dot {
   width: 7px;
@@ -539,6 +594,53 @@ html, body {
 .p2-dot.active {
   background: #e8c96a;
   box-shadow: 0 0 6px rgba(232, 201, 106, 0.5);
+}
+
+/* ===== 第三页：婚礼日程 ===== */
+.page3 {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: url("./assets/bg/forest-bg.jpg") center top / cover no-repeat;
+  padding: 16px 12px 80px;
+}
+/* 副标题：金色小字，位于面板标题之下 */
+.p3-sub {
+  text-align: center;
+  color: #c8b88a;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin: -8px 0 16px;
+}
+/* 日程列表 */
+.p3-schedule {
+  list-style: none;
+  margin: 0;
+  padding: 0 6px;
+}
+.p3-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  padding: 14px 0;
+  border-bottom: 1px dashed rgba(222, 188, 120, 0.35);
+  font-family: "Songti SC", "Noto Serif SC", serif;
+}
+.p3-item:last-child { border-bottom: none; }
+.p3-time {
+  color: #e8c96a;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
+  margin-right: 16px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.p3-label {
+  color: #f3e5bd;
+  font-size: 15px;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
 }
 
 </style>
@@ -555,12 +657,15 @@ html, body {
 
   <!-- ===== 顶部 Hero 模块 ===== -->
   <section class="hero">
-    <img class="hero-title-border" id="js-title-border" alt="标题边框装饰">
+    <div class="hero-frame" id="js-title-border">
+      <div class="hero-inner">
+        <img class="hero-title-font" id="js-title-font" alt="WEDDING INVITATION">
+      </div>
+    </div>
     <div class="hero-top-row">
       <span class="hero-small-title" id="js-top-small-title"></span>
       <span class="hero-date" id="js-top-date"></span>
     </div>
-    <img class="hero-title-font" id="js-title-font" alt="WEDDING INVITATION">
   </section>
 
   <!-- ===== 主内容面板 ===== -->
@@ -608,12 +713,15 @@ html, body {
 <div class="page2" id="page2">
   <!-- ===== Hero（复制第一页：边框图 + 顶部小字行 + 大标题） ===== -->
   <section class="hero">
-    <img class="hero-title-border" src="./assets/border/title-border.png" alt="标题边框装饰">
+    <div class="hero-frame">
+      <div class="hero-inner">
+        <div class="p2-hero-title" id="js-p2-hero-title">林间友人来信</div>
+      </div>
+    </div>
     <div class="hero-top-row">
       <span class="hero-small-title" id="js-p2-top-small-title"></span>
       <span class="hero-date" id="js-p2-top-date"></span>
     </div>
-    <div class="p2-hero-title" id="js-p2-hero-title">林间友人来信</div>
   </section>
 
   <!-- ===== 主内容面板 ===== -->
@@ -622,14 +730,13 @@ html, body {
 
     <!-- 来信轮播（左侧椭圆大头像 + 信纸卡片 + 左右箭头 + 底部圆点） -->
     <div class="p2-carousel">
-      <button class="p2-arrow prev" id="js-p2-prev" aria-label="上一封">‹</button>
-      <!-- 左侧：椭圆金环大头像 -->
+      <!-- 左栏：椭圆金环大头像 -->
       <div class="p2-ellipse-avatar">
         <div class="p2-ellipse-ring"></div>
         <div class="p2-ellipse-ring-inner"></div>
         <img class="p2-ellipse-img" id="js-p2-main-avatar" alt="来信者头像">
       </div>
-      <!-- 中间：信纸卡片 -->
+      <!-- 右栏：信纸卡片 -->
       <div class="p2-paper-card">
         <div class="p2-paper-header">
           <div class="p2-paper-sender">
@@ -638,13 +745,39 @@ html, body {
           </div>
           <span class="p2-paper-time" id="js-p2-time"></span>
         </div>
-        <div class="p2-paper-body">
+        <div class="p2-paper-body" id="js-p2-body">
           <p class="p2-paper-text" id="js-p2-text"></p>
         </div>
       </div>
+    </div>
+    <div class="p2-controls">
+      <button class="p2-arrow prev" id="js-p2-prev" aria-label="上一封">‹</button>
+      <div class="p2-dots" id="js-p2-dots"></div>
       <button class="p2-arrow next" id="js-p2-next" aria-label="下一封">›</button>
     </div>
-    <div class="p2-dots" id="js-p2-dots"></div>
+  </main>
+</div>
+
+<!-- ===== 第三页：婚礼日程 ===== -->
+<div class="page3" id="page3">
+  <!-- ===== Hero（复用前两页：边框图 + 顶部小字行 + 大标题） ===== -->
+  <section class="hero">
+    <div class="hero-frame">
+      <div class="hero-inner">
+        <div class="p2-hero-title" id="js-p3-hero-title"></div>
+      </div>
+    </div>
+    <div class="hero-top-row">
+      <span class="hero-small-title" id="js-p3-top-small-title"></span>
+      <span class="hero-date" id="js-p3-top-date"></span>
+    </div>
+  </section>
+
+  <!-- ===== 主内容面板 ===== -->
+  <main class="main-panel">
+    <h2 class="panel-title" id="js-p3-card-title"></h2>
+    <div class="p3-sub" id="js-p3-sub"></div>
+    <ul class="p3-schedule" id="js-p3-schedule"></ul>
   </main>
 </div>
 
