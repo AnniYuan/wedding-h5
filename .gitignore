@@ -1,0 +1,12 @@
+logs/
+log/
+npm-debug.log
+yarn-error.log
+node_modules/
+coverage/
+.idea/
+run/
+.DS_Store
+.joycode/
+CLAUDE.md
+assets/_raw/
