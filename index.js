@@ -24,29 +24,29 @@ const pageConfig = {
   page2BtnText: "查看全部来信",
   page2Letters: [
     {
-      mainAvatar: "./assets/avatar/letter-avatar-1.png",
-      avatar: "./assets/avatar/letter-avatar-1.png",
+      mainAvatar: "./assets/avatar/letter-avatar-1.jpg",
+      avatar: "./assets/avatar/letter-avatar-1.jpg",
       name: "林间小兔",
       time: "刚刚",
       text: "我们已收到你的婚礼邀请，愿穿过月光与花海，赴约这一场林间之约。"
     },
     {
-      mainAvatar: "./assets/avatar/letter-avatar-2.png",
-      avatar: "./assets/avatar/letter-avatar-2.png",
+      mainAvatar: "./assets/avatar/letter-avatar-2.jpg",
+      avatar: "./assets/avatar/letter-avatar-2.jpg",
       name: "森林松鼠",
       time: "5分钟前",
       text: "听说森林深处有一场婚礼，我们准备了最甜的松果，等着为你们庆祝。"
     },
     {
-      mainAvatar: "./assets/avatar/letter-avatar-3.png",
-      avatar: "./assets/avatar/letter-avatar-3.png",
+      mainAvatar: "./assets/avatar/letter-avatar-3.jpg",
+      avatar: "./assets/avatar/letter-avatar-3.jpg",
       name: "月光猫头鹰",
       time: "10分钟前",
       text: "月光洒满林间小路，我们将为你们照亮前方，祝福新人百年好合。"
     },
     {
-      mainAvatar: "./assets/avatar/letter-avatar-4.png",
-      avatar: "./assets/avatar/letter-avatar-4.png",
+      mainAvatar: "./assets/avatar/letter-avatar-4.jpg",
+      avatar: "./assets/avatar/letter-avatar-4.jpg",
       name: "梦境精灵",
       time: "30分钟前",
       text: "在梦境的尽头收到了你们的请柬，我们会带着星光与花香，准时赴这一场林间之约。"
