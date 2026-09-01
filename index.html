@@ -83,18 +83,19 @@ html, body {
 }
 
 /* 标题金框：border-image 九宫格。
-   素材 title-border.png 裁切后为 2196x1735，四角装饰（藤叶/兔子/茶杯钟）落在角区，
+   素材 title-border.png 已压缩至 1200x948，四角装饰（藤叶/兔子/茶杯钟）落在角区，
    中间只留纯金线细条用于拉伸，因此 hero 高度可随内容自由增长而装饰零变形。
-   切片(px)：上 1000 / 右 896 / 下 695 / 左 1100
+   切片(px)：上 546 / 右 490 / 下 380 / 左 601（由 2196 宽原图等比 x0.5464 换算）
+   ⚠️ 若再压缩此图，必须按新尺寸等比更新切片与 --s 除数！
    s = 边框实际宽度 / 素材宽度，保证四角始终按原比例渲染 */
 .hero-frame {
   --hw: calc(100vw - 24px);       /* wrapper 左右各 12px padding */
-  --s:  calc(var(--hw) / 2196);
+  --s:  calc(var(--hw) / 1200);   /* 素材已压缩至 1200x948 */
   border-style: solid;
-  border-width: calc(1000*var(--s)) calc(896*var(--s)) calc(695*var(--s)) calc(1100*var(--s));
+  border-width: calc(546*var(--s)) calc(490*var(--s)) calc(380*var(--s)) calc(601*var(--s));
   border-image-source: var(--title-border-img);
-  border-image-slice: 1000 896 695 1100;
-  border-image-width: calc(1000*var(--s)) calc(896*var(--s)) calc(695*var(--s)) calc(1100*var(--s));
+  border-image-slice: 546 490 380 601;
+  border-image-width: calc(546*var(--s)) calc(490*var(--s)) calc(380*var(--s)) calc(601*var(--s));
   border-image-repeat: stretch;
   z-index: 0;
   pointer-events: none;
@@ -102,8 +103,8 @@ html, body {
 /* 内容层：用负 margin 顶回金框的开口内（开口相对素材四边约留 150px）。
    这样内容仍在 .hero-frame 的流内 —— 内容一变高，金框就自动跟着拉长。 */
 .hero-inner {
-  margin: calc(-850*var(--s)) calc(-746*var(--s)) calc(-545*var(--s)) calc(-950*var(--s));
-  min-height: calc(1435*var(--s));   /* 空内容时仍保持素材原始比例 */
+  margin: calc(-465*var(--s)) calc(-408*var(--s)) calc(-298*var(--s)) calc(-519*var(--s));
+  min-height: calc(784*var(--s));   /* 空内容时仍保持素材原始比例 */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -451,8 +452,8 @@ html, body {
 }
 /* 右侧信纸卡片（背景使用信纸图素材） */
 /* 信纸卡片：整张 envelope.png 素材当卡片背景（邮戳/金边/右下绿叶/背后叠纸都在素材里）。
-   素材 1570x859 是横版，卡片却要竖着长，所以同样走 border-image 九宫格：
-   切片(px) 上 240 / 右 339 / 下 458 / 左 419 —— 邮戳落在左上角区、绿叶落在右下角区，
+   素材已压缩至 1000x547 横版，卡片却要竖着长，所以同样走 border-image 九宫格：
+   切片(px) 上 153 / 右 216 / 下 292 / 左 267（由 1570 宽原图等比 x0.637 换算，cqw 比例不变）—— 邮戳落在左上角区、绿叶落在右下角区，
    中间是纯纸面，纵向拉伸完全看不出来。fill 让中间纸面填进卡片内部。
    四边切片都按卡片自身宽度(cqw)换算，横竖同一缩放比例，素材零变形。 */
 .p2-paper-card {
@@ -470,7 +471,7 @@ html, body {
   pointer-events: none;
   border-style: solid;
   border-width: 15.29cqw 21.59cqw 29.17cqw 26.69cqw;
-  border-image: url("assets/border/envelope.png") 240 339 458 419 fill /
+  border-image: url("assets/border/envelope.png") 153 216 292 267 fill /
                 15.29cqw 21.59cqw 29.17cqw 26.69cqw / 0 stretch;
 }
 /* 内容压在纸面之上 */
