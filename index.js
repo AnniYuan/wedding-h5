@@ -123,16 +123,34 @@ $("#js-envlope").src = pageConfig.envelope;
 const introVideo = $("#js-intro-video");
 
 // 自动播放（静音，符合移动端浏览器策略）
-introVideo.play().catch(() => {});
+function tryPlayIntro() {
+  introVideo.play().catch(() => {});
+}
+tryPlayIntro();
+
+// 部署环境网络慢：脚本执行时视频数据可能还没就绪，
+// 数据可播时补一次播放，避免首屏黑屏
+introVideo.addEventListener("canplay", () => {
+  if (introVideo.paused) tryPlayIntro();
+});
+
+// 兜底：个别浏览器/webview 仍拦截自动播放时，
+// 用户首次触摸/点击页面任意位置即尝试静音开播（一次性）
+function unlockIntro() {
+  if (introVideo.paused) tryPlayIntro();
+  document.removeEventListener("touchstart", unlockIntro);
+  document.removeEventListener("click", unlockIntro);
+}
+document.addEventListener("touchstart", unlockIntro, { once: true });
+document.addEventListener("click", unlockIntro, { once: true });
 
 // 播放结束定格最后一帧
 introVideo.addEventListener("ended", () => {
   introVideo.currentTime = introVideo.duration;
 });
 
-// 点击重新播放（带声音）
+// 点击视频本身：静音重新播放（背景音乐会单独添加，视频全程保持静音）
 introVideo.addEventListener("click", () => {
-  introVideo.muted = false;
   introVideo.currentTime = 0;
   introVideo.play();
 });
