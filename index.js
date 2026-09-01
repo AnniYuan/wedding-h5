@@ -16,7 +16,7 @@ const pageConfig = {
 
   nav: ["任务", "日程", "地图", "登记"],
   // 导航点击锚点（与 nav 一一对应；目标隐藏时回退到第一页信笺卡）
-  navTargets: [".wrapper", "#page3", "#js-p3-map-btn", "#rsvpContainer"],
+  navTargets: [".wrapper", "#page3", "#page3", "#page4"],
 
   // 第二页
   page2HeroTitle: "林间友人来信",
@@ -65,6 +65,15 @@ const pageConfig = {
     { time: "14:30", label: "合影留念" },
     { time: "18:00", label: "晚宴开始" }
   ],
+
+  // 第四页：登记祝福（回执入口）
+  page4HeroTitle: "登记祝福",
+  page4CardTitle: "登记祝福",
+  page4SubTitle: "写下一句话，寄给森林里的我们",
+  page4Guide: "亲爱的大朋友：请柬已乘着晚风送达，若你愿赴这场林间之约，请留下你的足迹——我们好在森林深处，为你留一盏灯。",
+  page4BtnText: "确认赴约 · 留下祝福",
+  page4FormUrl: "https://wj.qq.com/s2/27732829/hpmy/", // 腾讯问卷链接
+  page4Closing: "✦ 我们会在森林深处，等候你的到来 ✦",
 
   // 婚纱照路径（素材留空时可先替换为占位图）
   photoUrl: [
@@ -281,3 +290,20 @@ const p3Schedule = $("#js-p3-schedule");
 p3Schedule.innerHTML = pageConfig.page3Schedule.map((item) =>
   `<li class="p3-item"><span class="p3-time">${item.time}</span><span class="p3-label">${item.label}</span></li>`
 ).join("");
+
+// ===================== 第四页：登记祝福 =====================
+$("#js-p4-top-small-title").innerText = pageConfig.topSmallTitle;
+$("#js-p4-top-date").innerText = pageConfig.topDate;
+$("#js-p4-hero-title").innerText = pageConfig.page4HeroTitle;
+$("#js-p4-card-title").innerText = pageConfig.page4CardTitle;
+$("#js-p4-sub").innerText = pageConfig.page4SubTitle;
+$("#js-p4-guide").innerText = pageConfig.page4Guide;
+$("#js-p4-closing").innerText = pageConfig.page4Closing;
+
+// 内嵌腾讯问卷：配置了链接才显示表单容器
+const p4FormWrap = $("#js-p4-form-wrap");
+if (pageConfig.page4FormUrl) {
+  $("#js-p4-iframe").src = pageConfig.page4FormUrl;
+} else {
+  p4FormWrap.style.display = "none";
+}

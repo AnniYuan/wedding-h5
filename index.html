@@ -643,6 +643,54 @@ html, body {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
 }
 
+/* ===== 第四页：登记祝福（报名/回执入口） ===== */
+.page4 {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: url("./assets/bg/forest-bg.jpg") center top / cover no-repeat;
+  padding: 16px 12px 80px;
+}
+/* 信纸卡：引导文案 + 问卷入口按钮 */
+.p4-paper-card {
+  background-color: #f2e8c9;
+  background-image: url("assets/border/envlope.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 135% 120%;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.38);
+  padding: 28px 26px 30px;
+  text-align: center;
+}
+.p4-guide {
+  color: #5a4632;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 15px;
+  line-height: 2;
+  letter-spacing: 0.5px;
+  margin: 0 0 18px;
+  text-align: left;
+}
+/* 底部金句 */
+.p4-closing {
+  text-align: center;
+  color: #e8c96a;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin-top: 22px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+/* 内嵌问卷容器（覆盖 rsvp-container 默认隐藏） */
+.p4-form-wrap {
+  display: block;
+  margin-top: 16px;
+}
+.p4-form-wrap .rsvp-iframe {
+  min-height: 650px;
+}
+
 </style>
 </head>
 <body>
@@ -778,6 +826,37 @@ html, body {
     <h2 class="panel-title" id="js-p3-card-title"></h2>
     <div class="p3-sub" id="js-p3-sub"></div>
     <ul class="p3-schedule" id="js-p3-schedule"></ul>
+  </main>
+</div>
+
+<!-- ===== 第四页：登记祝福（报名/回执入口） ===== -->
+<div class="page4" id="page4">
+  <!-- ===== Hero（复用前几页：边框图 + 顶部小字行 + 大标题） ===== -->
+  <section class="hero">
+    <div class="hero-frame">
+      <div class="hero-inner">
+        <div class="p2-hero-title" id="js-p4-hero-title"></div>
+      </div>
+    </div>
+    <div class="hero-top-row">
+      <span class="hero-small-title" id="js-p4-top-small-title"></span>
+      <span class="hero-date" id="js-p4-top-date"></span>
+    </div>
+  </section>
+
+  <!-- ===== 主内容面板 ===== -->
+  <main class="main-panel">
+    <h2 class="panel-title" id="js-p4-card-title"></h2>
+    <div class="p3-sub" id="js-p4-sub"></div>
+    <div class="p4-paper-card">
+      <p class="p4-guide" id="js-p4-guide"></p>
+    </div>
+    <!-- 内嵌腾讯问卷 -->
+    <div class="rsvp-container p4-form-wrap" id="js-p4-form-wrap">
+      <iframe id="js-p4-iframe" class="rsvp-iframe" frameborder="0" allowfullscreen
+        sandbox="allow-same-origin allow-scripts allow-modals allow-downloads allow-forms allow-popups"></iframe>
+    </div>
+    <div class="p4-closing" id="js-p4-closing"></div>
   </main>
 </div>
 
